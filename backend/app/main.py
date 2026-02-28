@@ -1,10 +1,17 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 import sqlite3
 
 app = FastAPI(title="Gerenciador de Tarefas")
 
-# --- BANCO DE DADOS (Configuração Inicial) ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 def init_db():
     conn = sqlite3.connect("tarefas.db")
     cursor = conn.cursor()
@@ -46,6 +53,26 @@ def listar_tarefas():
     tarefas = cursor.fetchall()
     conn.close()
     return {"tarefas": tarefas}
+
+@app.patch("/tarefas/{tarefa_id}")
+def alternar_conclusao(tarefa_id: int):
+    conn = sqlite3.connect("tarefas.db")
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT concluida FROM tarefas WHERE id = ?", (tarefa_id,))
+    resultado = cursor.fetchone()
+    
+    if not resultado:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Tarefa não encontrada")
+    
+    novo_status = not resultado[0]
+    
+    cursor.execute("UPDATE tarefas SET concluida = ? WHERE id = ?", (novo_status, tarefa_id))
+    conn.commit()
+    conn.close()
+    
+    return {"id": tarefa_id, "novo_status": novo_status}
 
 @app.delete("/tarefas/{tarefa_id}")
 def deletar_tarefa(tarefa_id: int):
