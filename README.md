@@ -17,7 +17,6 @@ Aplicar boas práticas de:
 ### Backend
 - FastAPI
 - SQLite (dev)
-- PostgreSQL (produção)
 
 ### Frontend
 - HTML
@@ -34,7 +33,47 @@ Aplicar boas práticas de:
 
 ### Backend
 
+1. Clonar repositório
 ```bash
-cd backend
+git clone https://github.com/seu-usuario/taskflow.git
+cd taskflow
+```
+
+2. Criar ambiente virtual
+
+🐧 Linux / Mac
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+🪟 Windows (PowerShell)
+```bash
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+```
+
+3. Entrar na pasta backend
+```bash
+cd backend/app
+```
+
+4. Instalar dependências
+```bash
 pip install -r requirements.txt
-uvicorn app.main:app --reload
+```
+
+5. Rodar o servidor FastAPI
+```bash
+uvicorn main:app --reload
+```
+
+O servidor rodará em:
+```bash
+http://127.0.0.1:8000
+```
+
+Documentação automática:
+```bash
+http://127.0.0.1:8000/docs
+```
